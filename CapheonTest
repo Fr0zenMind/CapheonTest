@@ -1,0 +1,177 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+using System.Threading.Tasks;
+namespace CapheonTest
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            ReadInput();
+            System.Console.ReadKey();
+        }
+        static void ReadInput()
+        {
+            string line;
+            List<string> dep = new List<string>();
+            List<string> task2Dep = new List<string>();
+            List<string> depTask1 = new List<string>();
+            String[] A = new string[10];
+            String[] B = new string[10];
+            int sizeA = 0;
+            int sizeB = 0;
+            int count = 0;
+            System.IO.StreamReader file =
+                new System.IO.StreamReader(@"D:\Unity Projects\CapheonTest\deps.in");
+            while ((line = file.ReadLine()) != null)
+            {
+                string[] words = line.Split(' ');
+                foreach (var word in words)
+                {
+                    dep.Add(word);
+                    task2Dep.Add(word);
+                }
+            }
+            file.Close();
+            bool isRepeating = false;
+            dep.Sort();
+            Console.WriteLine("Task1\n");
+            for (int i = 0; i < dep.Count; i++)
+            {
+                if (i == 1 || i > 1)
+                    for (int j = 0; j < i; j++)
+                        if (dep[j].SequenceEqual(dep[i]))
+                            isRepeating = true;
+                if (!isRepeating)
+                {
+                    Console.WriteLine(dep[i]);
+                    depTask1.Add(dep[i]);
+                }
+                else isRepeating = false;
+            }
+            Console.WriteLine("\n");
+            System.IO.StreamReader file3 =
+                new System.IO.StreamReader(@"D:\Unity Projects\CapheonTest\deps.in");
+            while ((line = file3.ReadLine()) != null)
+            {
+                //System.Console.WriteLine(line);
+                string[] words = line.Split(' ');
+                foreach (var word in words)
+                {
+                    if (count % 2 == 0)
+                    {
+                        A[sizeA] = word;
+                        sizeA++;
+                        count++;
+                    }
+                    else
+                    {
+                        B[sizeB] = word;
+                        sizeB++;
+                        count++;
+                    }
+                }
+            }
+            file.Close();
+            Console.WriteLine("\nTask2\n");
+            bool findPackage = false;
+            List<string> watchAfther = new List<string>();
+            List<string> showWatchAfther = new List<string>();
+            for (int i = 0; i < sizeA; i++)
+                {
+                    Console.Write(depTask1[i] + " ");
+                    for(int j=0;j<sizeA;j++)
+                    if(depTask1[i] == A[j])
+                        {
+                            showWatchAfther.Add(B[j]);
+                            watchAfther.Add(B[j]);
+                            if (watchAfther.Count > 0)
+                                for (int k=0; k < watchAfther.Count; k++)
+                                    {
+                                    findPackage = false;
+                                        for (int kl = 0; kl < sizeB; kl++)
+                                            if (watchAfther[k] == A[kl])
+                                            {
+                                                findPackage = true;
+                                                showWatchAfther.Add(B[kl]);
+                                                watchAfther.Add(B[kl]);
+                                            }
+                                            else if (findPackage && kl == sizeB - 1)
+                                            {
+                                            watchAfther.RemoveAt(k);
+                                                k--;
+                                            }
+                                        if (k == watchAfther.Count - 1)
+                                        {
+                                            watchAfther.Clear();
+                                            findPackage = false;
+                                }
+                                    }
+                        }
+                showWatchAfther.Sort();
+                for (int rmv = 0; rmv < showWatchAfther.Count - 1; rmv++)
+                    if (showWatchAfther[rmv] == showWatchAfther[rmv++])
+                        showWatchAfther.RemoveAt(rmv);
+                for (int st = 0; st < showWatchAfther.Count; st++)
+                    Console.Write(showWatchAfther[st] + " ");
+                showWatchAfther.Clear();
+
+                Console.WriteLine();
+                }
+            Console.WriteLine("\n\n\nTask3\n");
+            List<string> computers = new List<string>();
+            List<string> depModify = new List<string>();
+            depModify = dep;
+            List<string> lineComp = new List<string>();
+            string getLineComp;
+            List<string> checkLineComp = new List<string>();
+            System.IO.StreamReader file4 =
+                new System.IO.StreamReader(@"D:\Unity Projects\CapheonTest\computers.in");
+            while ((line = file4.ReadLine()) != null)
+            {
+                computers.Add(line);
+            }
+            file.Close();
+            for (int i = 0; i < computers.Count; i++)
+            {
+                getLineComp = computers[i];
+                string[] tested = getLineComp.Split(' ');
+
+                foreach (var word in tested)
+                {
+                    lineComp.Add(word);
+                    checkLineComp.Add(word);
+                }
+                int a = sizeA;
+                if (a == lineComp.Count)
+                {
+                    lineComp.Clear();
+                }
+                for (int j = 0; j < lineComp.Count; j++)
+                    for (int k = 0; k < sizeA; k++)
+                    {
+                        if (lineComp[j] == A[k])
+                        {
+                            lineComp.Add(B[k]);
+                        }
+                    }
+                checkLineComp.Sort();
+                for (int j = 0; j < checkLineComp.Count; j++)
+                    for (int k = 0; k < lineComp.Count; k++)
+                        if(lineComp[k] == checkLineComp[j])
+                        {
+                            lineComp.RemoveAt(k);
+                        }
+                lineComp.Sort();
+                for (int j = 0; j < lineComp.Count; j++)
+                    Console.Write(lineComp[j] + " ");
+                lineComp.Clear();
+                checkLineComp.Clear();
+                Console.WriteLine();
+            }
+        }
+    }
+}
